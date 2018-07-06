@@ -1,5 +1,6 @@
 package com.github.dyvoker.throbber;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -12,15 +13,24 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
 
-
 public class ThrobberView extends View {
+
+	private final static long DEFAULT_CYCLE_DELAY = 1500;
+	private final static long DEFAULT_ROTATION_CYCLE_DELAY = 2140;
 
 	@NonNull
 	private final Paint barPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 	@NonNull
 	private final RectF circleRect = new RectF();
 
+	private boolean isRunning = true;
 	private int size;
+
+	@NonNull
+	private final ValueAnimator normalizedAnimator;
+	@NonNull
+	private final ValueAnimator rotationAnimator;
+
 
 	public ThrobberView(Context context) {
 		this(context, null);
@@ -35,6 +45,18 @@ public class ThrobberView extends View {
 		barPaint.setStyle(Paint.Style.STROKE);
 		setBarColor(Color.BLUE);
 		setBarWidth(20.0f);
+
+		normalizedAnimator = ValueAnimator.ofFloat(0.0f, 1.0f);
+		normalizedAnimator.setInterpolator(null); // Yes, linear interpolator.
+		normalizedAnimator.setDuration(DEFAULT_CYCLE_DELAY);
+		normalizedAnimator.setRepeatCount(ValueAnimator.INFINITE);
+		normalizedAnimator.start();
+
+		rotationAnimator = ValueAnimator.ofFloat(0.0f, 360.0f);
+		rotationAnimator.setInterpolator(null);
+		rotationAnimator.setDuration(DEFAULT_ROTATION_CYCLE_DELAY);
+		rotationAnimator.setRepeatCount(ValueAnimator.INFINITE);
+		rotationAnimator.start();
 	}
 
 	@Override
@@ -48,7 +70,27 @@ public class ThrobberView extends View {
 		float barPadding = barPaint.getStrokeWidth() / 2.0f + 1.0f;
 		float circleWithPaddingSize = size - barPadding;
 		circleRect.set(barPadding, barPadding, circleWithPaddingSize, circleWithPaddingSize);
-		canvas.drawArc(circleRect, 0, 152, false, barPaint);
+		float value = (float) normalizedAnimator.getAnimatedValue();
+		float rotationAngle = (float) rotationAnimator.getAnimatedValue();
+		float startAngle = rotationAngle + ThrobberMath.calcStartAngle(value);
+		float sweepAngle = ThrobberMath.calcSweepAngle(value);
+		canvas.drawArc(circleRect, startAngle, sweepAngle, false, barPaint);
+		if (isRunning) {
+			invalidate();
+		}
+	}
+
+	public void start() {
+		isRunning = true;
+		normalizedAnimator.start();
+		rotationAnimator.start();
+		invalidate();
+	}
+
+	public void pause() {
+		isRunning = false;
+		normalizedAnimator.end();
+		rotationAnimator.end();
 	}
 
 	public void setBarWidth(float width) {
