@@ -7,11 +7,14 @@ import android.view.animation.AccelerateDecelerateInterpolator;
  */
 public interface ThrobberMath {
 
+	long DEFAULT_CYCLE_DURATION = 1500;
+	long DEFAULT_ROTATION_CYCLE_DURATION = 2240;
+
 	AccelerateDecelerateInterpolator ACCELERATE_DECELERATE_INTERPOLATOR =
 		new AccelerateDecelerateInterpolator();
 
-	float MIN_SWEEP_ANGLE = 0.03f * 360f; // 3%
-	float MAX_ADDITION_SWEEP_ANGLE = 0.72f * 360f; // 72% + 3% = 75%
+	float MIN_SWEEP_ANGLE = 0.05f * 360f; // 5%
+	float MAX_ADDITION_SWEEP_ANGLE = 0.70f * 360f; // 70% + 5% = 75%
 
 
 	/**

@@ -15,9 +15,6 @@ import android.view.View;
 
 public class ThrobberView extends View {
 
-	private final static long DEFAULT_CYCLE_DELAY = 1500;
-	private final static long DEFAULT_ROTATION_CYCLE_DELAY = 2140;
-
 	@NonNull
 	private final Paint barPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 	@NonNull
@@ -48,15 +45,15 @@ public class ThrobberView extends View {
 
 		normalizedAnimator = ValueAnimator.ofFloat(0.0f, 1.0f);
 		normalizedAnimator.setInterpolator(null); // Yes, linear interpolator.
-		normalizedAnimator.setDuration(DEFAULT_CYCLE_DELAY);
+		normalizedAnimator.setDuration(ThrobberMath.DEFAULT_CYCLE_DURATION);
 		normalizedAnimator.setRepeatCount(ValueAnimator.INFINITE);
-		normalizedAnimator.start();
 
 		rotationAnimator = ValueAnimator.ofFloat(0.0f, 360.0f);
 		rotationAnimator.setInterpolator(null);
-		rotationAnimator.setDuration(DEFAULT_ROTATION_CYCLE_DELAY);
+		rotationAnimator.setDuration(ThrobberMath.DEFAULT_ROTATION_CYCLE_DURATION);
 		rotationAnimator.setRepeatCount(ValueAnimator.INFINITE);
-		rotationAnimator.start();
+
+		start();
 	}
 
 	@Override
@@ -103,5 +100,25 @@ public class ThrobberView extends View {
 
 	public void setBarColorRes(@ColorRes int color) {
 		barPaint.setColor(getResources().getColor(color));
+	}
+
+	/**
+	 * @param duration Duration of full cycle of bar animation in milliseconds.
+	 */
+	public void setCycleDuration(long duration) {
+		if (duration < 10) {
+			duration = ThrobberMath.DEFAULT_CYCLE_DURATION;
+		}
+		normalizedAnimator.setDuration(duration);
+	}
+
+	/**
+	 * @param duration Duration of full cycle of bar rotation in milliseconds.
+	 */
+	public void setRotationCycleDuration(long duration) {
+		if (duration < 10) {
+			duration = ThrobberMath.DEFAULT_ROTATION_CYCLE_DURATION;
+		}
+		rotationAnimator.setDuration(duration);
 	}
 }
