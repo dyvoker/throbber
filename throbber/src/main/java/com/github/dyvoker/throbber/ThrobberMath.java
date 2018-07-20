@@ -5,23 +5,24 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 /**
  * Base values and mathematical functions for throbber animation.
  */
-public interface ThrobberMath {
+@SuppressWarnings("WeakerAccess")
+public class ThrobberMath {
 
-	long DEFAULT_CYCLE_DURATION = 1500;
-	long DEFAULT_ROTATION_CYCLE_DURATION = 2240;
+	public static long DEFAULT_CYCLE_DURATION = 1500;
+	public static long DEFAULT_ROTATION_CYCLE_DURATION = 2240;
 
-	AccelerateDecelerateInterpolator ACCELERATE_DECELERATE_INTERPOLATOR =
+	public static AccelerateDecelerateInterpolator ACCELERATE_DECELERATE_INTERPOLATOR =
 		new AccelerateDecelerateInterpolator();
 
-	float MIN_SWEEP_ANGLE = 0.05f * 360f; // 5%
-	float MAX_ADDITION_SWEEP_ANGLE = 0.70f * 360f; // 70% + 5% = 75%
+	public static float MIN_SWEEP_ANGLE = 0.05f * 360f; // 5%
+	public static float MAX_ADDITION_SWEEP_ANGLE = 0.70f * 360f; // 70% + 5% = 75%
 
 
 	/**
 	 * @param value Current value of animation from 0.0f to 1.0f.
 	 * @return Value of sweep angle for current state of throbber animation.
 	 */
-	static float calcSweepAngle(float value) {
+	public static float calcSweepAngle(float value) {
 		// In this case we have two steps of animation:
 		// 1. Sweep angle increase;
 		// 2. Sweep angle decrease.
@@ -46,7 +47,7 @@ public interface ThrobberMath {
 	 * @param value Current value of animation from 0.0f to 1.0f.
 	 * @return Value of start angle for current state of throbber animation.
 	 */
-	static float calcStartAngle(float value) {
+	public static float calcStartAngle(float value) {
 		if (value < 0.5f) {
 			// Only in second part of animation we move start angle.
 			return 0.0f;

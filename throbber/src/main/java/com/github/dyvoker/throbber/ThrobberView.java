@@ -13,6 +13,7 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
 
+@SuppressWarnings("unused")
 public class ThrobberView extends View {
 
 	@NonNull
@@ -20,7 +21,8 @@ public class ThrobberView extends View {
 	@NonNull
 	private final RectF circleRect = new RectF();
 
-	private boolean isRunning = true;
+	@Nullable
+	private CircleDrawable circleDrawable;
 	private int size;
 
 	@NonNull
@@ -53,7 +55,9 @@ public class ThrobberView extends View {
 		rotationAnimator.setDuration(ThrobberMath.DEFAULT_ROTATION_CYCLE_DURATION);
 		rotationAnimator.setRepeatCount(ValueAnimator.INFINITE);
 
-		start();
+		normalizedAnimator.start();
+		rotationAnimator.start();
+		invalidate();
 	}
 
 	@Override
@@ -63,6 +67,10 @@ public class ThrobberView extends View {
 
 	@Override
 	protected void onDraw(@NonNull Canvas canvas) {
+		// Draw bar circle background if needed.
+		if (circleDrawable != null) {
+			circleDrawable.draw(canvas);
+		}
 		// Calculate padding for stroke of the bar.
 		float barPadding = barPaint.getStrokeWidth() / 2.0f + 1.0f;
 		float circleWithPaddingSize = size - barPadding;
@@ -72,32 +80,39 @@ public class ThrobberView extends View {
 		float startAngle = rotationAngle + ThrobberMath.calcStartAngle(value);
 		float sweepAngle = ThrobberMath.calcSweepAngle(value);
 		canvas.drawArc(circleRect, startAngle, sweepAngle, false, barPaint);
-		if (isRunning) {
+
+		// Repeat redraw while visible.
+		if (getVisibility() == VISIBLE) {
 			invalidate();
 		}
 	}
 
-	public void start() {
-		isRunning = true;
-		normalizedAnimator.start();
-		rotationAnimator.start();
-		invalidate();
+	@Override
+	public void setVisibility(int visibility) {
+		super.setVisibility(visibility);
+		if (visibility == VISIBLE) {
+			// Start redraws.
+			invalidate();
+		}
 	}
 
-	public void pause() {
-		isRunning = false;
-		normalizedAnimator.end();
-		rotationAnimator.end();
-	}
-
+	/**
+	 * @param width Width of a bar.
+	 */
 	public void setBarWidth(float width) {
 		barPaint.setStrokeWidth(width);
 	}
 
+	/**
+	 * @param color Color of a bar.
+	 */
 	public void setBarColor(@ColorInt int color) {
 		barPaint.setColor(color);
 	}
 
+	/**
+	 * @param color Color of a bar (by id).
+	 */
 	public void setBarColorRes(@ColorRes int color) {
 		barPaint.setColor(getResources().getColor(color));
 	}
@@ -120,5 +135,21 @@ public class ThrobberView extends View {
 			duration = ThrobberMath.DEFAULT_ROTATION_CYCLE_DURATION;
 		}
 		rotationAnimator.setDuration(duration);
+	}
+
+	/**
+	 * Show default circle background (white circle with shadow).
+	 */
+	public void showCircleBackground() {
+		circleDrawable = new CircleDrawable();
+		invalidate();
+	}
+
+	/**
+	 * @param circleDrawable Custom circle background.
+	 */
+	public void setCircleBackground(@NonNull CircleDrawable circleDrawable) {
+		this.circleDrawable = circleDrawable;
+		invalidate();
 	}
 }

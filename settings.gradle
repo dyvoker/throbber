@@ -1,1 +1,1 @@
-include ':app', ':throbber', ':sample'
+include ':throbber', ':sample'
