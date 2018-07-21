@@ -5,7 +5,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.widget.FrameLayout;
 
 import com.github.dyvoker.android_utils.DpUtils;
 import com.github.dyvoker.throbber.CircleDrawable;
@@ -18,8 +18,6 @@ public class MainActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		LinearLayout root = findViewById(R.id.root);
-
 		// Programmatically create throbber.
 		ThrobberView throbberView = new ThrobberView(this);
 		CircleDrawable circleDrawable =
@@ -29,7 +27,8 @@ public class MainActivity extends AppCompatActivity {
 		} else {
 			throbberView.setBackgroundDrawable(circleDrawable);
 		}
-		root.addView(throbberView);
+		FrameLayout throbberContainer = findViewById(R.id.throbber_container);
+		throbberContainer.addView(throbberView);
 		ViewGroup.LayoutParams layoutParams = throbberView.getLayoutParams();
 		layoutParams.width = (int) DpUtils.dpToPx(64);
 		layoutParams.height = (int) DpUtils.dpToPx(64);
