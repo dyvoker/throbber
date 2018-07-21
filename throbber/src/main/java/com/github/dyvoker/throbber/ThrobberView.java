@@ -2,7 +2,7 @@ package com.github.dyvoker.throbber;
 
 import android.animation.ValueAnimator;
 import android.content.Context;
-import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
@@ -15,11 +15,18 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
 
+import com.github.dyvoker.android_utils.DpUtils;
+
 @SuppressWarnings("unused")
 public class ThrobberView extends View {
 
-	private final static float BASE_PADDING = dpToPx(10);
-	private final static float DEFAULT_BAR_WIDTH = dpToPx(4);
+	private final static float BASE_PADDING_DP = 10;
+	private final static float DEFAULT_BAR_WIDTH_DP = 4;
+	private final static int DEFAULT_CIRCLE_BACKGROUND_COLOR = 0xFFFFFFFF;
+	private final static int DEFAULT_SHADOW_COLOR = 0x80000000;
+	private final static float DEFAULT_SHADOW_RADIUS_DP = 2;
+	private final static float DEFAULT_SHADOW_OFFSET_X_DP = 0;
+	private final static float DEFAULT_SHADOW_OFFSET_Y_DP = 2;
 
 	@NonNull
 	private final Paint barPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -27,6 +34,7 @@ public class ThrobberView extends View {
 	private final RectF circleRect = new RectF();
 
 	private int size;
+	private float basePadding;
 
 	@NonNull
 	private final ValueAnimator normalizedAnimator;
@@ -45,8 +53,66 @@ public class ThrobberView extends View {
 	public ThrobberView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
 		super(context, attrs, defStyleAttr);
 		barPaint.setStyle(Paint.Style.STROKE);
-		setBarColor(getThemeAccentColor(getContext()));
-		setBarWidth(DEFAULT_BAR_WIDTH);
+
+		// Get attributes from xml layout.
+		TypedArray arr = context.obtainStyledAttributes(attrs, R.styleable.ThrobberView);
+
+		float barWidth = arr.getDimension(
+			R.styleable.ThrobberView_throbber_barWidth,
+			DpUtils.dpToPx(DEFAULT_BAR_WIDTH_DP)
+		);
+		setBarWidth(barWidth);
+
+		int barColor = arr.getColor(
+			R.styleable.ThrobberView_throbber_barColor,
+			getThemeAccentColor(getContext())
+		);
+		setBarColor(barColor);
+
+		boolean showCircleBackground = arr.getBoolean(
+			R.styleable.ThrobberView_throbber_showCircleBackground,
+			false
+		);
+		int circleBackgroundColor = arr.getColor(
+			R.styleable.ThrobberView_throbber_circleBackgroundColor,
+			DEFAULT_CIRCLE_BACKGROUND_COLOR
+		);
+		int shadowColor = arr.getColor(
+			R.styleable.ThrobberView_throbber_shadowColor,
+			DEFAULT_SHADOW_COLOR
+		);
+		float shadowRadius = arr.getDimension(
+			R.styleable.ThrobberView_throbber_shadowRadius,
+			DpUtils.dpToPx(DEFAULT_SHADOW_RADIUS_DP)
+		);
+		float shadowOffsetX = arr.getDimension(
+			R.styleable.ThrobberView_throbber_shadowOffsetX,
+			DpUtils.dpToPx(DEFAULT_SHADOW_OFFSET_X_DP)
+		);
+		float shadowOffsetY = arr.getDimension(
+			R.styleable.ThrobberView_throbber_shadowOffsetY,
+			DpUtils.dpToPx(DEFAULT_SHADOW_OFFSET_Y_DP)
+		);
+
+		arr.recycle();  // Do this when done.
+
+		if (showCircleBackground) {
+			CircleDrawable circleDrawable =
+				new CircleDrawable(
+					circleBackgroundColor,
+					shadowColor,
+					DpUtils.pxToDp(shadowRadius),
+					DpUtils.pxToDp(shadowOffsetX),
+					DpUtils.pxToDp(shadowOffsetY)
+				);
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+				setBackground(circleDrawable);
+			} else {
+				setBackgroundDrawable(circleDrawable);
+			}
+		}
+
+		basePadding = DpUtils.dpToPx(BASE_PADDING_DP);
 
 		normalizedAnimator = ValueAnimator.ofFloat(0.0f, 1.0f);
 		normalizedAnimator.setInterpolator(null); // Yes, linear interpolator.
@@ -71,7 +137,7 @@ public class ThrobberView extends View {
 	@Override
 	protected void onDraw(@NonNull Canvas canvas) {
 		// Calculate padding for stroke of the bar.
-		float barPadding = barPaint.getStrokeWidth() / 2.0f + 1.0f + BASE_PADDING;
+		float barPadding = barPaint.getStrokeWidth() / 2.0f + 1.0f + basePadding;
 		float circleWithPaddingSize = size - barPadding;
 		circleRect.set(
 			getPaddingLeft() + barPadding,
@@ -155,17 +221,10 @@ public class ThrobberView extends View {
 	}
 
 	/**
-	 * Convert dp to px.
-	 *
-	 * @param dp Size in dp.
-	 * @return Size in px.
+	 * @param basePadding Base padding of throbber bar from sides.
 	 */
-	private static float dpToPx(float dp) {
-		return TypedValue.applyDimension(
-			TypedValue.COMPLEX_UNIT_DIP,
-			dp,
-			Resources.getSystem().getDisplayMetrics()
-		);
+	public void setBasePadding(float basePadding) {
+		this.basePadding = basePadding;
 	}
 
 	private static int getThemeAccentColor(@NonNull Context context) {

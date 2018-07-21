@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:auto="http://schemas.android.com/apk/res-auto"
 	android:id="@+id/root"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
@@ -12,10 +13,17 @@
 		android:layout_height="64dp"
 		/>
 
-	<ProgressBar
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:indeterminate="true"
+	<com.github.dyvoker.throbber.ThrobberView
+		android:layout_width="64dp"
+		android:layout_height="64dp"
+		auto:throbber_barColor="@color/colorPrimary"
+		auto:throbber_barWidth="4dp"
+		auto:throbber_showCircleBackground="true"
+		auto:throbber_circleBackgroundColor="@android:color/white"
+		auto:throbber_shadowColor="@color/defaultShadowColor"
+		auto:throbber_shadowRadius="2dp"
+		auto:throbber_shadowOffsetX="0dp"
+		auto:throbber_shadowOffsetY="2dp"
 		/>
 
 </LinearLayout>

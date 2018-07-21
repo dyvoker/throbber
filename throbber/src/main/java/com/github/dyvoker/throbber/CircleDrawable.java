@@ -1,6 +1,5 @@
 package com.github.dyvoker.throbber;
 
-import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
@@ -10,8 +9,8 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.TypedValue;
 
+import com.github.dyvoker.android_utils.DpUtils;
 import com.github.dyvoker.shadow_lib.CanvasWithShadow;
 
 /**
@@ -78,7 +77,7 @@ public class CircleDrawable extends Drawable {
 		Canvas tempCanvas = shadow.getCanvas();
 
 		// Draw primitives.
-		float shadowPadding = dpToPx(shadowRadiusDp + Math.max(offsetXDp, offsetYDp)) + 2;
+		float shadowPadding = DpUtils.dpToPx(shadowRadiusDp + Math.max(offsetXDp, offsetYDp)) + 2;
 		float radius = Math.min(canvas.getWidth() / 2, canvas.getHeight() / 2) - shadowPadding;
 		tempCanvas.drawCircle(radius + shadowPadding, radius + shadowPadding, radius, paint);
 
@@ -104,19 +103,5 @@ public class CircleDrawable extends Drawable {
 	@Override
 	public int getOpacity() {
 		return PixelFormat.OPAQUE;
-	}
-
-	/**
-	 * Convert dp to px.
-	 *
-	 * @param dp Size in dp.
-	 * @return Size in px.
-	 */
-	private static float dpToPx(float dp) {
-		return TypedValue.applyDimension(
-			TypedValue.COMPLEX_UNIT_DIP,
-			dp,
-			Resources.getSystem().getDisplayMetrics()
-		);
 	}
 }

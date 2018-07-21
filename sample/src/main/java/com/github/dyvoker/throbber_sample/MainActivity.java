@@ -1,14 +1,13 @@
 package com.github.dyvoker.throbber_sample;
 
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.TypedValue;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import com.github.dyvoker.android_utils.DpUtils;
 import com.github.dyvoker.throbber.CircleDrawable;
 import com.github.dyvoker.throbber.ThrobberView;
 
@@ -32,22 +31,8 @@ public class MainActivity extends AppCompatActivity {
 		}
 		root.addView(throbberView);
 		ViewGroup.LayoutParams layoutParams = throbberView.getLayoutParams();
-		layoutParams.width = (int) dpToPx(64);
-		layoutParams.height = (int) dpToPx(64);
+		layoutParams.width = (int) DpUtils.dpToPx(64);
+		layoutParams.height = (int) DpUtils.dpToPx(64);
 		throbberView.setLayoutParams(layoutParams);
-	}
-
-	/**
-	 * Convert dp to px.
-	 *
-	 * @param dp Size in dp.
-	 * @return Size in px.
-	 */
-	private static float dpToPx(float dp) {
-		return TypedValue.applyDimension(
-			TypedValue.COMPLEX_UNIT_DIP,
-			dp,
-			Resources.getSystem().getDisplayMetrics()
-		);
 	}
 }

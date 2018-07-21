@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<declare-styleable name="ThrobberView">
+		<attr name="throbber_barWidth" format="dimension" />
+		<attr name="throbber_barColor" format="color" />
+		<attr name="throbber_showCircleBackground" format="boolean" />
+		<attr name="throbber_circleBackgroundColor" format="color" />
+		<attr name="throbber_shadowColor" format="color" />
+		<attr name="throbber_shadowRadius" format="dimension" />
+		<attr name="throbber_shadowOffsetX" format="dimension" />
+		<attr name="throbber_shadowOffsetY" format="dimension" />
+	</declare-styleable>
+</resources>
