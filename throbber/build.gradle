@@ -5,10 +5,10 @@ apply plugin: 'com.jfrog.bintray'
 ext {
 	publishedGroupId = 'com.github.dyvoker'
 	artifact = 'throbber'
-	libraryVersion = '0.9'
+	libraryVersion = '1.0'
 
 	libraryName = 'Throbber'
-	libraryDescription = 'Simple throbber.'
+	libraryDescription = 'Simple throbber for Android apps.'
 	developerId = 'dyvoker'
 	developerName = 'Ivan Tormozov'
 	developerEmail = 'dyvoker@gmail.com'
@@ -31,7 +31,7 @@ android {
 	defaultConfig {
 		minSdkVersion 14
 		targetSdkVersion 27
-		versionCode 0
+		versionCode 1
 		versionName libraryVersion
 	}
 	buildTypes {
