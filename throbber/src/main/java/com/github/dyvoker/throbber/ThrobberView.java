@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.os.Build;
 import android.support.annotation.ColorInt;
 import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
@@ -21,8 +22,6 @@ public class ThrobberView extends View {
 	@NonNull
 	private final RectF circleRect = new RectF();
 
-	@Nullable
-	private CircleDrawable circleDrawable;
 	private int size;
 
 	@NonNull
@@ -67,10 +66,6 @@ public class ThrobberView extends View {
 
 	@Override
 	protected void onDraw(@NonNull Canvas canvas) {
-		// Draw bar circle background if needed.
-		if (circleDrawable != null) {
-			circleDrawable.draw(canvas);
-		}
 		// Calculate padding for stroke of the bar.
 		float barPadding = barPaint.getStrokeWidth() / 2.0f + 1.0f;
 		float circleWithPaddingSize = size - barPadding;
@@ -139,17 +134,15 @@ public class ThrobberView extends View {
 
 	/**
 	 * Show default circle background (white circle with shadow).
+	 * You can create customized {@link CircleDrawable} and set it via {@link #setBackgroundDrawable}.
 	 */
 	public void showCircleBackground() {
-		circleDrawable = new CircleDrawable();
-		invalidate();
-	}
-
-	/**
-	 * @param circleDrawable Custom circle background.
-	 */
-	public void setCircleBackground(@NonNull CircleDrawable circleDrawable) {
-		this.circleDrawable = circleDrawable;
+		CircleDrawable circleDrawable = new CircleDrawable();
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+			setBackground(circleDrawable);
+		} else {
+			setBackgroundDrawable(circleDrawable);
+		}
 		invalidate();
 	}
 }
