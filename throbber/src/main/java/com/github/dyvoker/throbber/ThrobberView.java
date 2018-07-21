@@ -2,8 +2,8 @@ package com.github.dyvoker.throbber;
 
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.os.Build;
@@ -12,10 +12,14 @@ import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.View;
 
 @SuppressWarnings("unused")
 public class ThrobberView extends View {
+
+	private final static float BASE_PADDING = dpToPx(10);
+	private final static float DEFAULT_BAR_WIDTH = dpToPx(4);
 
 	@NonNull
 	private final Paint barPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -41,8 +45,8 @@ public class ThrobberView extends View {
 	public ThrobberView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
 		super(context, attrs, defStyleAttr);
 		barPaint.setStyle(Paint.Style.STROKE);
-		setBarColor(Color.BLUE);
-		setBarWidth(20.0f);
+		setBarColor(getThemeAccentColor(getContext()));
+		setBarWidth(DEFAULT_BAR_WIDTH);
 
 		normalizedAnimator = ValueAnimator.ofFloat(0.0f, 1.0f);
 		normalizedAnimator.setInterpolator(null); // Yes, linear interpolator.
@@ -61,21 +65,25 @@ public class ThrobberView extends View {
 
 	@Override
 	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-		size = Math.min(w, h);
+		size = Math.min(w - getPaddingLeft() - getPaddingRight(), h - getPaddingTop() - getPaddingBottom());
 	}
 
 	@Override
 	protected void onDraw(@NonNull Canvas canvas) {
 		// Calculate padding for stroke of the bar.
-		float barPadding = barPaint.getStrokeWidth() / 2.0f + 1.0f;
+		float barPadding = barPaint.getStrokeWidth() / 2.0f + 1.0f + BASE_PADDING;
 		float circleWithPaddingSize = size - barPadding;
-		circleRect.set(barPadding, barPadding, circleWithPaddingSize, circleWithPaddingSize);
+		circleRect.set(
+			getPaddingLeft() + barPadding,
+			getPaddingTop() + barPadding,
+			getPaddingLeft() + circleWithPaddingSize,
+			getPaddingTop() + circleWithPaddingSize
+		);
 		float value = (float) normalizedAnimator.getAnimatedValue();
 		float rotationAngle = (float) rotationAnimator.getAnimatedValue();
 		float startAngle = rotationAngle + ThrobberMath.calcStartAngle(value);
 		float sweepAngle = ThrobberMath.calcSweepAngle(value);
 		canvas.drawArc(circleRect, startAngle, sweepAngle, false, barPaint);
-
 		// Repeat redraw while visible.
 		if (getVisibility() == VISIBLE) {
 			invalidate();
@@ -144,5 +152,25 @@ public class ThrobberView extends View {
 			setBackgroundDrawable(circleDrawable);
 		}
 		invalidate();
+	}
+
+	/**
+	 * Convert dp to px.
+	 *
+	 * @param dp Size in dp.
+	 * @return Size in px.
+	 */
+	private static float dpToPx(float dp) {
+		return TypedValue.applyDimension(
+			TypedValue.COMPLEX_UNIT_DIP,
+			dp,
+			Resources.getSystem().getDisplayMetrics()
+		);
+	}
+
+	private static int getThemeAccentColor(@NonNull Context context) {
+		final TypedValue value = new TypedValue ();
+		context.getTheme().resolveAttribute(R.attr.colorAccent, value, true);
+		return value.data;
 	}
 }

@@ -40,7 +40,7 @@ public class CircleDrawable extends Drawable {
 	 * @param color Color of circular background.
 	 */
 	public CircleDrawable(@ColorInt int color) {
-		this(color, 0x80000000, 4, 2, 2);
+		this(color, 0x80000000, 2, 0, 2);
 	}
 
 	/**
