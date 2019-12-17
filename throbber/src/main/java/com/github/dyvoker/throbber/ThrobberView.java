@@ -15,8 +15,6 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
 
-import com.github.dyvoker.android_utils.DpUtils;
-
 @SuppressWarnings("unused")
 public class ThrobberView extends View {
 
@@ -28,6 +26,8 @@ public class ThrobberView extends View {
 	private final static float DEFAULT_SHADOW_OFFSET_X_DP = 0;
 	private final static float DEFAULT_SHADOW_OFFSET_Y_DP = 2;
 
+	@NonNull
+	private final DensityConverter densityConverter;
 	@NonNull
 	private final Paint barPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 	@NonNull
@@ -52,6 +52,7 @@ public class ThrobberView extends View {
 
 	public ThrobberView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
 		super(context, attrs, defStyleAttr);
+		densityConverter = new DensityConverter(getResources().getDisplayMetrics());
 		barPaint.setStyle(Paint.Style.STROKE);
 
 		// Get attributes from xml layout.
@@ -59,7 +60,7 @@ public class ThrobberView extends View {
 
 		float barWidth = arr.getDimension(
 			R.styleable.ThrobberView_throbber_barWidth,
-			DpUtils.dpToPx(DEFAULT_BAR_WIDTH_DP)
+			densityConverter.dpToPx(DEFAULT_BAR_WIDTH_DP)
 		);
 		setBarWidth(barWidth);
 
@@ -83,15 +84,15 @@ public class ThrobberView extends View {
 		);
 		float shadowRadius = arr.getDimension(
 			R.styleable.ThrobberView_throbber_shadowRadius,
-			DpUtils.dpToPx(DEFAULT_SHADOW_RADIUS_DP)
+			densityConverter.dpToPx(DEFAULT_SHADOW_RADIUS_DP)
 		);
 		float shadowOffsetX = arr.getDimension(
 			R.styleable.ThrobberView_throbber_shadowOffsetX,
-			DpUtils.dpToPx(DEFAULT_SHADOW_OFFSET_X_DP)
+			densityConverter.dpToPx(DEFAULT_SHADOW_OFFSET_X_DP)
 		);
 		float shadowOffsetY = arr.getDimension(
 			R.styleable.ThrobberView_throbber_shadowOffsetY,
-			DpUtils.dpToPx(DEFAULT_SHADOW_OFFSET_Y_DP)
+			densityConverter.dpToPx(DEFAULT_SHADOW_OFFSET_Y_DP)
 		);
 
 		arr.recycle();  // Do this when done.
@@ -100,10 +101,10 @@ public class ThrobberView extends View {
 			CircleDrawable circleDrawable =
 				new CircleDrawable(
 					circleBackgroundColor,
-					shadowColor,
-					DpUtils.pxToDp(shadowRadius),
-					DpUtils.pxToDp(shadowOffsetX),
-					DpUtils.pxToDp(shadowOffsetY)
+					densityConverter, shadowColor,
+					densityConverter.pxToDp(shadowRadius),
+					densityConverter.pxToDp(shadowOffsetX),
+					densityConverter.pxToDp(shadowOffsetY)
 				);
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
 				setBackground(circleDrawable);
@@ -112,7 +113,7 @@ public class ThrobberView extends View {
 			}
 		}
 
-		basePadding = DpUtils.dpToPx(BASE_PADDING_DP);
+		basePadding = densityConverter.dpToPx(BASE_PADDING_DP);
 
 		normalizedAnimator = ValueAnimator.ofFloat(0.0f, 1.0f);
 		normalizedAnimator.setInterpolator(null); // Yes, linear interpolator.
@@ -211,7 +212,7 @@ public class ThrobberView extends View {
 	 * You can create customized {@link CircleDrawable} and set it via {@link #setBackgroundDrawable}.
 	 */
 	public void showCircleBackground() {
-		CircleDrawable circleDrawable = new CircleDrawable();
+		CircleDrawable circleDrawable = new CircleDrawable(densityConverter);
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
 			setBackground(circleDrawable);
 		} else {
