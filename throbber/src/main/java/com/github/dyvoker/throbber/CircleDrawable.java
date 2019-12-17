@@ -6,9 +6,9 @@ import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.ColorInt;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.ColorInt;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.github.dyvoker.android_utils.DpUtils;
 import com.github.dyvoker.shadow_lib.CanvasWithShadow;
@@ -78,7 +78,7 @@ public class CircleDrawable extends Drawable {
 
 		// Draw primitives.
 		float shadowPadding = DpUtils.dpToPx(shadowRadiusDp + Math.max(offsetXDp, offsetYDp)) + 2;
-		float radius = Math.min(canvas.getWidth() / 2, canvas.getHeight() / 2) - shadowPadding;
+		float radius = Math.min(getBounds().width() / 2, getBounds().height() / 2) - shadowPadding;
 		tempCanvas.drawCircle(radius + shadowPadding, radius + shadowPadding, radius, paint);
 
 		// Draw shadow.
