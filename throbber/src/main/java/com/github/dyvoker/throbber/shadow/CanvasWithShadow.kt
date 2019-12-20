@@ -8,7 +8,7 @@ import com.github.dyvoker.throbber.DensityConverter
 /**
  * Helping class for working with canvas.
  * Get [Canvas] and manually draw on it,
- * then call [.draw].
+ * then call [draw].
  * It automatically draw canvas content with shadow to another canvas.
  *
  * @param width Custom width of canvas.
@@ -28,7 +28,7 @@ class CanvasWithShadow(
 
     /**
      * @return Special canvas. You must draw on it,
-     * it needs for working a method [.draw].
+     * it needs for working a method [draw].
      */
     val canvas: Canvas = Canvas(canvasBitmap)
     private var bitmapWithShadow : Bitmap? = null // Cached bitmap with shadow.

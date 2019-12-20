@@ -40,7 +40,7 @@ object ShadowUtils {
 
     /**
      * Creates copy of bitmap with shadow on it.
-     * Can scale output bitmap to size = [destWidth x destHeight].
+     * Can scale output bitmap to size = [destWidth] x [destHeight].
      *
      * @param bitmap Original bitmap.
      * @param densityConverter Converter of Density Independence Pixels.

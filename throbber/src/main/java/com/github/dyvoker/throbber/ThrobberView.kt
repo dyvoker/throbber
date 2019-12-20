@@ -105,7 +105,7 @@ class ThrobberView(
 
     /**
      * Show default circle background (white circle with shadow).
-     * You can create customized [CircleDrawable] and set it via [.setBackgroundDrawable].
+     * You can create customized [CircleDrawable] and set it via [setBackgroundDrawable].
      */
     fun showCircleBackground() {
         val circleDrawable = CircleDrawable(densityConverter)
